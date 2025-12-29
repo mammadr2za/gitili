@@ -16,7 +16,7 @@ def get_git_diff():
     return result.stdout
 
 def get_commit_suggestions(diff_text):
-    response = requests.post(
+    response = requests.get(
         N8N_WEBHOOK_URL,
         json={"diff": diff_text},
         timeout=60
