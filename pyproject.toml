@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gitili"
+version = "0.1.0"
+description = "Git commit message suggestions + push notify via n8n/Telegram"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = ["requests>=2.31.0"]
+
+[project.scripts]
+gitili = "gitili.cli:main"

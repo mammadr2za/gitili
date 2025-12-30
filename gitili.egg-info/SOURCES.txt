@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+gitili/__init__.py
+gitili/cli.py
+gitili.egg-info/PKG-INFO
+gitili.egg-info/SOURCES.txt
+gitili.egg-info/dependency_links.txt
+gitili.egg-info/entry_points.txt
+gitili.egg-info/requires.txt
+gitili.egg-info/top_level.txt
