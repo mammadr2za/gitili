@@ -1,0 +1,26 @@
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: gitili-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      # IMPORTANT: set your own long random value in .env (do not commit .env)
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+
+      # Optional but strongly recommended if you expose n8n to internet:
+      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE}
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+
+      # Helps n8n build correct webhook URLs (especially if hosted)
+      - WEBHOOK_URL=${WEBHOOK_URL}
+
+      # Timezone (optional)
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:

@@ -1,0 +1,183 @@
+{
+  "name": "Gitili - commit suggestions + push notify",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "gitili/commit-message",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "b19870fe-af58-4e84-9932-a4fe539b5d34",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        -160
+      ],
+      "webhookId": "6bd8f44d-71eb-458f-a052-532d2518b592"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Get raw text from AI output\nconst rawText = $json.output[0].content[0].text;\n\n// Parse JSON string returned by the model\nconst parsed = JSON.parse(rawText);\n\n// Ensure messages exist\nif (!parsed.messages || !Array.isArray(parsed.messages)) {\n  throw new Error(\"AI response does not contain messages array\");\n}\n\nreturn [\n  {\n    messages: parsed.messages\n  }\n];\n"
+      },
+      "id": "bf17f3e8-45d6-4c71-b847-b53c0bb41204",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a senior software engineer.\n\nAnalyze the following git diff and identify all logical changes.\nFor EACH logical change, generate ONE Git commit message following\nthe Conventional Commits specification.\n\nRules:\n- Use the correct type: feat, fix, refactor, chore, docs, test, perf, ci, build\n- Use imperative, present tense\n- Max 72 characters per message\n- No emojis\n- No markdown\n- No explanations\n- No numbering\n-Generate commit messages for all logical changes.\nIf more than 5 messages are possible, return ONLY the 5 most important ones.\n\nReturn ONLY valid JSON in this exact format:\n{\n  \"messages\": [\n    \"<type>: <description>\",\n    \"<type>: <description>\"\n  ]\n}\n\nGit diff:\n{{$json.body.diff}}\n"
+            },
+            {
+              "role": "system",
+              "content": "You are an expert software engineer.\nGenerate concise, professional Git commit messages.\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -96,
+        -160
+      ],
+      "id": "e7737157-7856-402b-93a2-e723a6b85994",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "gZlJlexAoLOSkVjN",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gitili/push",
+        "options": {}
+      },
+      "id": "832fb100-12b0-4380-a58e-2bf423792ac0",
+      "name": "Webhook Push",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        64
+      ],
+      "webhookId": "6e45dbd9-3cfd-4840-9a30-11d50f6f1647"
+    },
+    {
+      "parameters": {
+        "functionCode": "const b = $json.body || {};\n\nconst commits = Array.isArray(b.commits) ? b.commits : [];\nconst commitsText = commits.length\n  ? commits.map(c => `- ${c}`).join('\\n')\n  : '- (no commits found)';\n\nreturn [{\n  json: {\n    text:\n`Push complete\nUser: ${b.user}\nRepo: ${b.repo_slug}\nBranch: ${b.branch}\nRemote: ${b.remote_name}\n\nCommits pushed: ${b.commit_count}\nFiles changed: ${b.files_changed}\n\n${commitsText}`\n  }\n}];\n"
+      },
+      "id": "979effbd-c7b4-41ec-be2c-1617c6096e50",
+      "name": "Format Push Message",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        16,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "916259830",
+        "text": "={{$json.text}}",
+        "additionalFields": {
+          "parse_mode": "None"
+        }
+      },
+      "id": "a7c6cb1f-86af-46ea-8144-ee0edab0b15c",
+      "name": "Telegram Send Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        400,
+        64
+      ],
+      "webhookId": "0270523a-7f9f-4f35-a117-b41ce598121c",
+      "credentials": {
+        "telegramApi": {
+          "id": "UTLnBtJfyrpr6vp5",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Push": {
+      "main": [
+        [
+          {
+            "node": "Format Push Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Push Message": {
+      "main": [
+        [
+          {
+            "node": "Telegram Send Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "ee93025d-ed1d-4b6a-9e40-12d267332e29",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4ea513273a3bd00cd351a5a48e5b7ad6c51717240073db9d7690e60aca8ac099"
+  },
+  "id": "Taq9U69wDb5mIcey",
+  "tags": []
+}

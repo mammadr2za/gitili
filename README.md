@@ -1,44 +1,62 @@
-# Gitili
+## n8n Setup (Required)
 
-Gitili is a small CLI tool that:
-- Suggests up to **5 Conventional Commits** messages from your staged `git diff`
-- Lets you pick one and runs `git commit -m "..."`
-- Optionally runs `git push` and sends a **Telegram notification** via **n8n**
+Gitili needs n8n to:
+1) generate 5 commit message suggestions
+2) send Telegram notifications after `git push`
 
-> Gitili does NOT require Telegram to generate commit messages.
-> Telegram is only needed for push notifications.
+### 1) Import the n8n workflow
+
+1. Open n8n in your browser
+2. Create a new workflow (or open an empty one)
+3. Click **Import** → **Import from Clipboard**
+4. Paste the workflow JSON from this repository:
+
+- `n8n/workflow.json` (recommended to include in this repo)
+  - It contains two webhooks:
+    - `/webhook/gitili/commit-message`
+    - `/webhook/gitili/push`
+
+5. Save the workflow
+6. Configure credentials:
+   - **OpenAI** credentials in the “Message a model” node
+   - **Telegram** credentials in the “Telegram Send Message” node
+
+7. Activate the workflow (toggle **Active**)
+
+> IMPORTANT:
+> - When the workflow is **Active**, n8n uses `/webhook/...`
+> - When testing in “Listen/Test”, n8n uses `/webhook-test/...`
 
 ---
 
-## Requirements
+### 2) Create Telegram bot + credentials (for push notifications)
 
-- Python 3.8+
-- Git
-- n8n running (local or server)
-- For push notifications: Telegram bot token (BotFather) + n8n Telegram credentials
+1. In Telegram, open `@BotFather`
+2. Create a bot: `/newbot`
+3. Copy the bot token
+4. In n8n → **Credentials** → create **Telegram API** credential
+5. Paste the bot token
 
----
-
-## Install
-
-### Option 1: Install from source (recommended for development)
-Clone the repo and install in editable mode:
+To get your `chat_id`, send a message to your bot and run:
 
 ```bash
-git clone <YOUR_REPO_URL>
-cd gitili
-pip install -e .
-# gitili
-## Config (Required)
+curl "https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates"
+## Run n8n (Docker) + Import Workflow
 
-Gitili reads config from a file in the **project root**:
+This repo includes an n8n workflow at:
 
-- `./config.json` (real config used by gitili)
-- `./config.example.json` (example only)
+- `n8n/workflow.json`
 
-### Setup
+### 1) Start n8n with Docker
 
-1) Copy example to config:
+Requirements:
+- Docker + Docker Compose installed
+
+From the project root:
 
 ```bash
-cp config.example.json config.json
+cp .env.example .env
+# edit .env and set:
+# - N8N_ENCRYPTION_KEY
+# - (optional) basic auth user/pass
+nano .env
