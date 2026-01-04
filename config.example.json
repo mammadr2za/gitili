@@ -1,5 +1,5 @@
 {
-  "commit_url": "https://YOUR_N8N_DOMAIN/webhook/gitili/commit-message",
-  "push_url": "https://YOUR_N8N_DOMAIN/webhook/gitili/push",
+  "commit_url": "http://localhost:5678/webhook/gitili/commit-message",
+  "push_url": "http://localhost:5678/webhook/gitili/push",
   "remote": "origin"
 }

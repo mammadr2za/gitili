@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/myenv/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/myenv/include" />
+      <excludeFolder url="file://$MODULE_DIR$/myenv/lib/python3.12/site-packages/blinker-1.9.0.dist-info" />
+      <excludeFolder url="file://$MODULE_DIR$/myenv/lib/python3.12/site-packages/click-8.3.1.dist-info" />
+      <excludeFolder url="file://$MODULE_DIR$/myenv/lib/python3.12/site-packages/flask-3.1.2.dist-info" />
+      <excludeFolder url="file://$MODULE_DIR$/myenv/lib/python3.12/site-packages/itsdangerous-2.2.0.dist-info" />
+      <excludeFolder url="file://$MODULE_DIR$/myenv/lib/python3.12/site-packages/jinja2-3.1.6.dist-info" />
+      <excludeFolder url="file://$MODULE_DIR$/myenv/lib/python3.12/site-packages/markupsafe-3.0.3.dist-info" />
+      <excludeFolder url="file://$MODULE_DIR$/myenv/lib/python3.12/site-packages/pip-24.0.dist-info" />
+      <excludeFolder url="file://$MODULE_DIR$/myenv/lib/python3.12/site-packages/werkzeug-3.1.4.dist-info" />
+      <excludeFolder url="file://$MODULE_DIR$/myenv/lib/python3.12/site-packages/werkzeug/debug/shared" />
+    </content>
     <orderEntry type="jdk" jdkName="Python 3.12" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

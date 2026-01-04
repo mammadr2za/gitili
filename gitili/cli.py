@@ -13,12 +13,7 @@ import requests
 
 def load_config() -> Dict[str, Any]:
     cfg_path = Path.cwd() / "config.json"
-
-    if not cfg_path.exists():
-        print("Missing config.json in current directory.")
-        print("Create it from config.example.json:")
-        print("  cp config.example.json config.json")
-        sys.exit(1)
+    print(f"Loading config from {cfg_path}")
 
     try:
         with cfg_path.open("r", encoding="utf-8") as f:
